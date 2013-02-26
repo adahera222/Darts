@@ -1,0 +1,100 @@
+using UnityEngine;
+using System.Collections;
+
+public class DartThrow : MonoBehaviour 
+{
+    public GameObject Score, Board;
+	public float DragSpeed, ThrowSpeed, RotationSpeed;
+	int[] scores =  {20, 1, 18, 4, 13, 6, 10, 15, 2, 17, 3, 19, 7, 16, 8, 11, 14, 9, 12, 5};
+	int points = 0;
+	bool done = false;
+
+	
+	void Start () 
+	{
+	}
+	
+	void Update () 
+	{
+		
+		if (!done) 
+	// ============== !!!! to trash!!!! ============== 
+		{
+			if (transform.position.z >= (Board.transform.position.z-2)) 
+	//  ============== !!!! change to collider !!!! ============== 
+			{
+				rigidbody.constraints = RigidbodyConstraints.FreezeAll;
+				AddPoints();
+				done = true;
+			} else 	
+				if (Input.GetMouseButton(0)) 					
+					if (Input.GetMouseButton(1))
+					{
+						Vector3 angles = new Vector3 (-Input.GetAxisRaw("Mouse Y"), 
+														Input.GetAxisRaw("Mouse X"), 0);
+						transform.Rotate(angles*RotationSpeed*Time.deltaTime);
+						Debug.Log(transform.eulerAngles);
+					} 
+					else
+					{
+						Vector3 direction = new Vector3 (Input.GetAxisRaw("Mouse X"), 
+													Input.GetAxisRaw("Mouse Y"), 0);
+						transform.Translate(direction*DragSpeed*Time.deltaTime);
+					}
+
+		}
+	}
+	
+	void FixedUpdate () 
+	{
+		if (Input.GetMouseButtonUp(0)) 
+		{
+			Vector3 direct = new Vector3 (transform.eulerAngles.x, transform.eulerAngles.y, -transform.eulerAngles.z);
+		 	rigidbody.AddRelativeForce(direct*ThrowSpeed, ForceMode.Impulse );
+	// ============== !!!! летит хуй знает куда !!! ============
+		}
+	}
+
+	private
+		
+	void AddPoints() 
+	{
+		points += CountPoints(); 
+		Score.guiText.text = points.ToString();
+	}
+		
+	int CountPoints() 
+	{
+		Vector2 v = new Vector2 (transform.position.x, transform.position.y);
+		
+		//sector
+		float a = Vector2.Angle(Vector2.up, v);
+		if (( v.x < 0 ) && ( a > 9 )) 
+			a = 360 - a;
+		float b = (a+9)/18;
+		int i = Mathf.FloorToInt(b);
+		int result = scores[i];
+		
+		//distance
+		float d = Vector2.Distance(Vector2.zero, v)/Board.transform.localScale.x;
+		d *= 200;
+		
+		if (d < 80) {
+			if (d < 72) {
+				if (d < 50){
+					result *= 2;
+					if (d < 45) {
+						if (d < 13) {
+							result = 50;
+							if (d < 7)
+								result = 100;
+						}
+					}
+				}
+			}
+		} else
+			result = 0;
+		
+		return result;
+	}
+}
