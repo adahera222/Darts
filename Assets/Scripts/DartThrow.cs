@@ -33,7 +33,6 @@ public class DartThrow : MonoBehaviour
 						Vector3 angles = new Vector3 (-Input.GetAxisRaw("Mouse Y"), 
 														Input.GetAxisRaw("Mouse X"), 0);
 						transform.Rotate(angles*RotationSpeed*Time.deltaTime);
-						Debug.Log(transform.eulerAngles);
 					} 
 					else
 					{
@@ -48,10 +47,8 @@ public class DartThrow : MonoBehaviour
 	void FixedUpdate () 
 	{
 		if (Input.GetMouseButtonUp(0)) 
-		{
-			Vector3 direct = new Vector3 (transform.eulerAngles.x, transform.eulerAngles.y, -transform.eulerAngles.z);
-		 	rigidbody.AddRelativeForce(direct*ThrowSpeed, ForceMode.Impulse );
-	// ============== !!!! летит хуй знает куда !!! ============
+		{	
+			rigidbody.AddRelativeForce(Vector3.forward*ThrowSpeed, ForceMode.Impulse);
 		}
 	}
 
