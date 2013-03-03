@@ -7,7 +7,6 @@ public class DartThrow : MonoBehaviour
 	public float DragSpeed, ThrowSpeed, RotationSpeed;
 	int[] scores =  {20, 1, 18, 4, 13, 6, 10, 15, 2, 17, 3, 19, 7, 16, 8, 11, 14, 9, 12, 5};
 	int points = 0;
-	bool done = false;
 
 	
 	void Start () 
@@ -16,40 +15,30 @@ public class DartThrow : MonoBehaviour
 	
 	void Update () 
 	{
-		
-		if (!done) 
-	// ============== !!!! to trash!!!! ============== 
-		{
-			if (transform.position.z >= (Board.transform.position.z-2)) 
-	//  ============== !!!! change to collider !!!! ============== 
+		if ((Input.GetMouseButton(0)) & !CompareTag("Finish")) 					
+			if (Input.GetMouseButton(1))
 			{
-				rigidbody.constraints = RigidbodyConstraints.FreezeAll;
-				AddPoints();
-				done = true;
-			} else 	
-				if (Input.GetMouseButton(0)) 					
-					if (Input.GetMouseButton(1))
-					{
-						Vector3 angles = new Vector3 (-Input.GetAxisRaw("Mouse Y"), 
-														Input.GetAxisRaw("Mouse X"), 0);
-						transform.Rotate(angles*RotationSpeed*Time.deltaTime);
-					} 
-					else
-					{
-						Vector3 direction = new Vector3 (Input.GetAxisRaw("Mouse X"), 
-													Input.GetAxisRaw("Mouse Y"), 0);
-						transform.Translate(direction*DragSpeed*Time.deltaTime);
-					}
-
-		}
+				Vector3 angles = new Vector3 (-Input.GetAxisRaw("Mouse Y"), Input.GetAxisRaw("Mouse X"), 0);
+				transform.Rotate(angles*RotationSpeed*Time.deltaTime);
+			} 
+			else
+			{
+				Vector3 direction = new Vector3 (Input.GetAxisRaw("Mouse X"), Input.GetAxisRaw("Mouse Y"), 0);
+				transform.Translate(direction*DragSpeed*Time.deltaTime);
+			}
 	}
 	
 	void FixedUpdate () 
 	{
 		if (Input.GetMouseButtonUp(0)) 
-		{	
 			rigidbody.AddRelativeForce(Vector3.forward*ThrowSpeed, ForceMode.Impulse);
-		}
+	}
+	
+	void OnCollisionEnter()
+	{
+		rigidbody.constraints = RigidbodyConstraints.FreezeAll;
+		AddPoints();
+		tag = "Finish";
 	}
 
 	private
